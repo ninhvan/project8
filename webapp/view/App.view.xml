@@ -12,9 +12,10 @@
       <ToolbarSpacer id="_IDGenToolbarSpacer1" />
       <SearchField id="searchField" width="auto" search=".onFilterPosts" />
       
-      <Button id="_IDGenButton" text="Thêm" icon="sap-icon://add" press="onAdd" />
+      <Button id="_IDGenButton" text="Thêm" icon="sap-icon://add" press="onAdd" visible="{/isButtonVisible}" />
       <Button id="_IDGenButton1" text="Xoá" icon="sap-icon://delete" press="onDelete" />
       <Button id="_IDGenButton2" text="Lưu" icon="sap-icon://save" press="onSave" />  
+      <Button id="_IDGenButton3" text="change" icon="{/buttonIcon}" press="onChange" />
     </Toolbar>
 
     <Table id="userTable" items="{/users}" mode="SingleSelectMaster">
@@ -26,9 +27,9 @@
       <items>
         <ColumnListItem id="_IDGenColumnListItem">
           <cells>
-            <Input id="_IDGenInput" value="{hoten}" />
-            <Input id="_IDGenInput1" value="{diachi}" />
-            <Input id="_IDGenInput2" value="{sdt}" />
+            <Input id="_IDGenInput" value="{hoten}"   editable="{/editable}" required="true" />
+            <Input id="_IDGenInput1" value="{diachi}"  editable="{/editable}"/>
+            <Input id="_IDGenInput2" value="{sdt}"     editable="{/editable}"/>
           </cells>
         </ColumnListItem>
       </items>

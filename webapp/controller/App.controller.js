@@ -4,28 +4,46 @@ sap.ui.define(
     "sap/m/MessageToast",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
+    "sap/ui/model/json/JSONModel",
   ],
-  (BaseController, MessageToast, Filter, FilterOperator) => {
+  (BaseController, MessageToast, Filter, FilterOperator, JSONModel) => {
     "use strict";
 
     return BaseController.extend("project8.controller.App", {
       onInit() {
         const oData = {
+          isButtonVisible: false,
+          buttonIcon: "sap-icon://edit",
+          editable: false,
           users: [
             { hoten: "Nguyễn Văn A", diachi: "Hà Nội", sdt: "0901234567" },
             { hoten: "Trần Thị B", diachi: "Hồ Chí Minh", sdt: "0987654321" },
           ],
         };
 
-        const oModel = new sap.ui.model.json.JSONModel(oData);
+        const oModel = new JSONModel(oData);
+
         this.getView().setModel(oModel);
-        // console.log("this", this);
+      },
+      onChange: function () {
+        var oModel = this.getView().getModel();
+        var editable = oModel.getProperty("/editable");
+
+        if (editable) {
+          oModel.setProperty("/editable", false);
+          oModel.setProperty("/isButtonVisible", false);
+          oModel.setProperty("/buttonIcon", "sap-icon://edit");
+        } else {
+          oModel.setProperty("/editable", true);
+          oModel.setProperty("/isButtonVisible", true);
+          oModel.setProperty("/buttonIcon", "sap-icon://display");
+        }
       },
 
       onAdd: function () {
         const oModel = this.getView().getModel();
         const aUsers = oModel.getProperty("/users");
-        console.log("this", aUsers);
+        console.log(oModel);
         aUsers.push({ hoten: "", diachi: "", sdt: "" });
         oModel.setProperty("/users", aUsers);
       },
@@ -37,18 +55,21 @@ sap.ui.define(
 
       onDelete: function () {
         const oTable = this.byId("userTable");
-        const iIndex = oTable.getSelectedItem();
-
-        if (iIndex === null) {
+        const oSelectedItem = oTable.getSelectedItem();
+        var aItems = oTable.getAggregation("items");
+        var iIndex = aItems.indexOf(oSelectedItem);
+        console.log("Index của dòng được chọn:", iIndex);
+        if (iIndex === -1) {
           MessageToast.show("Vui lòng chọn dòng để xóa.");
           return;
+        } else {
+          const oModel = this.getView().getModel();
+          const aUsers = oModel.getProperty("/users");
+          aUsers.splice(iIndex, 1);
+          oModel.setProperty("/users", aUsers);
+          iIndex = null;
+          MessageToast.show("Đã xóa dòng.");
         }
-        console.log("thi err", iIndex);
-        const oModel = this.getView().getModel();
-        const aUsers = oModel.getProperty("/users");
-        aUsers.splice(iIndex, 1);
-        oModel.setProperty("/users", aUsers);
-        MessageToast.show("Đã xóa dòng.");
       },
 
       onFilterPosts: function (oEvent) {
