@@ -16,8 +16,20 @@ sap.ui.define(
           buttonIcon: "sap-icon://edit",
           editable: false,
           users: [
-            { hoten: "Nguyễn Văn A", diachi: "Hà Nội", sdt: "0901234567" },
-            { hoten: "Trần Thị B", diachi: "Hồ Chí Minh", sdt: "0987654321" },
+            {
+              // icon: "sap-icon://sys-enter-2",
+              hotel: "Nguyễn Văn A",
+              diachi: "Hà Nội",
+              sdt: "0901234567",
+              selected: false,
+            },
+            {
+              // icon: "sap-icon://sys-enter-2",
+              hoten: "Trần Thị B",
+              diachi: "Hồ Chí Minh",
+              sdt: "0987654321",
+              selected: false,
+            },
           ],
         };
 
@@ -54,22 +66,14 @@ sap.ui.define(
       },
 
       onDelete: function () {
-        const oTable = this.byId("userTable");
-        const oSelectedItem = oTable.getSelectedItem();
-        var aItems = oTable.getAggregation("items");
-        var iIndex = aItems.indexOf(oSelectedItem);
-        console.log("Index của dòng được chọn:", iIndex);
-        if (iIndex === -1) {
-          MessageToast.show("Vui lòng chọn dòng để xóa.");
-          return;
-        } else {
-          const oModel = this.getView().getModel();
-          const aUsers = oModel.getProperty("/users");
-          aUsers.splice(iIndex, 1);
-          oModel.setProperty("/users", aUsers);
-          iIndex = null;
-          MessageToast.show("Đã xóa dòng.");
-        }
+        const oModel = this.getView().getModel();
+        let aUsers = oModel.getProperty("/users");
+
+        // Giữ lại các dòng chưa chọn
+        aUsers = aUsers.filter((user) => !user.selected);
+
+        oModel.setProperty("/users", aUsers);
+        this.byId("selectAllCheckbox").setSelected(false); // reset checkbox tổng
       },
 
       onFilterPosts: function (oEvent) {
@@ -83,6 +87,59 @@ sap.ui.define(
         var oTable = this.byId("userTable");
         var oBinding = oTable.getBinding("items");
         oBinding.filter(aFilter);
+      },
+
+      onSelectAll: function (oEvent) {
+        var bSelected = oEvent.getParameter("selected"); // true nếu được chọn
+        var oModel = this.getView().getModel();
+        var aData = oModel.getProperty("/users"); // Đường dẫn đến mảng dữ liệu
+
+        // Cập nhật trạng thái selected cho từng dòng
+        aData.forEach(function (oItem) {
+          oItem.selected = bSelected;
+        });
+
+        oModel.setProperty("/Users", aData); // Cập nhật lại model
+      },
+
+      onSortAsc: function () {
+        var oTable = this.byId("userTable");
+        var oBinding = oTable.getBinding("items");
+        var sSortField = this.byId("sortFieldSelect").getSelectedKey();
+
+        if (sSortField) {
+          var oSorter = new sap.ui.model.Sorter(sSortField, false); // false = ASC
+          oBinding.sort(oSorter);
+        }
+      },
+
+      onSortDesc: function () {
+        var oTable = this.byId("userTable");
+        var oBinding = oTable.getBinding("items");
+        var sSortField = this.byId("sortFieldSelect").getSelectedKey();
+
+        if (sSortField) {
+          var oSorter = new sap.ui.model.Sorter(sSortField, true); // true = DESC
+          oBinding.sort(oSorter);
+        }
+      },
+
+      onDownload: function () {
+        var aData = this.getView().getModel().getProperty("/users");
+
+        if (typeof XLSX === "undefined") {
+          sap.m.MessageToast.show(
+            "Không thể tải thư viện XLSX. Kiểm tra kết nối hoặc file index.html."
+          );
+          console.error("XLSX is not defined");
+          return;
+        }
+
+        var oWorksheet = XLSX.utils.json_to_sheet(aData);
+        var oWorkbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(oWorkbook, oWorksheet, "Users");
+
+        XLSX.writeFile(oWorkbook, "DanhSachNguoiDung.xlsx");
       },
     });
   }

@@ -1,1 +1,5 @@
 /* Enter your custom styles here */
+.searchField {
+  margin-bottom: 15px;
+  border: 1px solid red; /
+}
