@@ -30,7 +30,7 @@
       <Button id="_IDGenButton1" text="Xoá" icon="sap-icon://delete" press="onDelete" visible="{/isButtonVisible}" />
       <Button id="_IDGenButton2" text="Lưu" icon="sap-icon://save" press="onSave" />  
       <Button id="_IDGenButton3" text="change" icon="{/buttonIcon}" press="onChange" />
-        <Button id="_IDGenButton6" text="Tải xuống" icon="sap-icon://excel-attachment" press="onDownload"/>
+      <Button id="_IDGenButton6" text="Tải xuống" icon="sap-icon://excel-attachment" press="onDownload"/>
     </Toolbar>
 
     <Table id="userTable" items="{/users}" mode="SingleSelectMaster">
@@ -54,9 +54,9 @@
 
             <!-- <core:Icon id="_IDGenIcon" src="{icon}" size="1.2rem" color="blue" tooltip="Chỉnh sửa" /> -->
 
-            <Input id="_IDGenInput"   value="{hoten}"   editable="{/editable}"/>
-            <Input id="_IDGenInput1"  value="{diachi}"  editable="{/editable}"/>
-            <Input id="_IDGenInput2"  value="{sdt}"     editable="{/editable}"/>
+            <Input id="_IDGenInput"   value="{hoten}"   editable="{/editable}" submit="onSubmit" type="Text"/>
+            <Input id="_IDGenInput1"  value="{diachi}"  editable="{/editable}" type="Text"/>
+            <Input id="_IDGenInput2"  value="{sdt}"     editable="{/editable}" type="Number"/>
           </cells>
         </ColumnListItem>
       </items>

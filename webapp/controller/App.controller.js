@@ -18,7 +18,7 @@ sap.ui.define(
           users: [
             {
               // icon: "sap-icon://sys-enter-2",
-              hotel: "Nguyễn Văn A",
+              hoten: "Nguyễn Văn A",
               diachi: "Hà Nội",
               sdt: "0901234567",
               selected: false,
@@ -34,7 +34,6 @@ sap.ui.define(
         };
 
         const oModel = new JSONModel(oData);
-
         this.getView().setModel(oModel);
       },
       onChange: function () {
@@ -61,8 +60,12 @@ sap.ui.define(
       },
 
       onSave: function () {
-        MessageToast.show("Dữ liệu đã được lưu (tạm thời trong bộ nhớ).");
-        // Nếu muốn lưu backend thì gọi AJAX hoặc OData update ở đây
+        var oModel = this.getView().getModel(); // JSONModel
+        var aData = oModel.getProperty("/users"); // Dữ liệu đã sửa tự động binding vào model
+
+        // Tùy mục đích: gửi đi server, lưu local, show JSON…
+        console.log("Dữ liệu đã lưu:", aData);
+        sap.m.MessageToast.show("Đã lưu dữ liệu (tạm thời).");
       },
 
       onDelete: function () {
